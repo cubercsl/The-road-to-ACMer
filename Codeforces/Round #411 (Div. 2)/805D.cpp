@@ -8,12 +8,8 @@ long long fastpow(long long b)
 	while (b)
 	{
 		if (b & 1)
-		{
-			r *= base;
-			r %= MOD;
-		}
-		base *= base;
-		base %= MOD;
+			r = r * base % MOD;
+		base = base * base % MOD;
 		b >>= 1;
 	}
 	return r - 1;

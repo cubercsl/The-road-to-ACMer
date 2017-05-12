@@ -4,9 +4,11 @@
 # Content
 ## Codeforces
 - [x] Codeforces Round #411 (Div. 2)
+- [x] Codeforces Round #412 (Div. 2)
+- [x] Codeforces Round #413
 
 ## HDOJ
-- [ ] C语言程序设计练习(2000~2032)
+- [X] C语言程序设计练习(2000~2032)
 
 ## UVaOJ
 - **语言篇**
