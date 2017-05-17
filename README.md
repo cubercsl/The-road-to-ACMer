@@ -6,13 +6,14 @@
 - [x] Codeforces Round #411 (Div. 2)
 - [x] Codeforces Round #412 (Div. 2)
 - [x] Codeforces Round #413
+- [x] Codeforces Round #414
 
 ## HDOJ
 - [X] C语言程序设计练习(2000~2032)
 
 ## UVaOJ
 - **语言篇**
-	- [ ] Ch3-数组与字符串
+	- [x] Ch3-数组与字符串
 	- [ ] Ch4-函数与递归
 	- [ ] Ch5-C++与STL入门
 - **基础篇**
