@@ -14,19 +14,19 @@ using namespace std;
 
 int main()
 {
-	int t;
-	cin >> t;
-	while (t--)
-	{
-		char s[80];
-		int cnt = 0, score = 0;
-		cin >> s;
-		for (int i = 0; i < strlen(s); i++)
-			if (s[i] == 'O')
-				score += ++cnt;
-			else
-				cnt = 0;
-		cout << score << endl;
-	}
-	return 0;
+    int t;
+    cin >> t;
+    while (t--)
+    {
+        char s[80];
+        int cnt = 0, score = 0;
+        cin >> s;
+        for (int i = 0; i < strlen(s); i++)
+            if (s[i] == 'O')
+                score += ++cnt;
+            else
+                cnt = 0;
+        cout << score << endl;
+    }
+    return 0;
 }

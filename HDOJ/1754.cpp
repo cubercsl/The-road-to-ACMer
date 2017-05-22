@@ -24,65 +24,65 @@ int input[MAXN];
 int segtree[MAXN];
 void build(int L, int R, int node)
 {
-	if (L == R)
-	{
-		segtree[node] = input[L];
-		return;
-	}
-	int mid = (L + R) / 2;
-	build(L, mid, Lson);
-	build(mid + 1, R, Rson);
-	segtree[node] = max(segtree[Lson], segtree[Rson]);
+    if (L == R)
+    {
+        segtree[node] = input[L];
+        return;
+    }
+    int mid = (L + R) / 2;
+    build(L, mid, Lson);
+    build(mid + 1, R, Rson);
+    segtree[node] = max(segtree[Lson], segtree[Rson]);
 }
 
 void update(int pos, int val)
 {
-	int node = pos + t - 1;
-	segtree[node] = val;
-	while (node > 1)
-	{
-		node >>= 1;
-		segtree[node] = max(segtree[Lson], segtree[Rson]);
-	}
+    int node = pos + t - 1;
+    segtree[node] = val;
+    while (node > 1)
+    {
+        node >>= 1;
+        segtree[node] = max(segtree[Lson], segtree[Rson]);
+    }
 }
 
 int query(int x, int y, int L, int R, int node)
 {
-	int mid = L + (R - L) / 2, ans = NINF;
-	if (x <= L && R <= y)
-		return segtree[node];
-	if (x <= mid)
-		ans = max(ans, query(x, y, L, mid, Lson));
-	if (mid < y)
-		ans = max(ans, query(x, y, mid + 1, R, Rson));
-	return ans;
+    int mid = L + (R - L) / 2, ans = NINF;
+    if (x <= L && R <= y)
+        return segtree[node];
+    if (x <= mid)
+        ans = max(ans, query(x, y, L, mid, Lson));
+    if (mid < y)
+        ans = max(ans, query(x, y, mid + 1, R, Rson));
+    return ans;
 }
 
 int main()
 {
-	int n, m;
-	while (scanf("%d%d", &n, &m) != EOF)
-	{
-		memset(input, 0xc0, sizeof(input));
-		for (int i = 1; i <= n; i++)
-			scanf("%d", &input[i]);
-		t = 1;
-		while (t < n)
-			t <<= 1;
-		build(1, t, 1);
-		while (m--)
-		{
-			char cmd;
-			int x, y;
-			getchar();
-			scanf("%c", &cmd);
-			getchar();
-			scanf("%d%d", &x, &y);
-			if (cmd == 'U')
-				update(x, y);
-			else
-				printf("%d\n", query(x, y, 1, t, 1));
-		}
-	}
-	return 0;
+    int n, m;
+    while (scanf("%d%d", &n, &m) != EOF)
+    {
+        memset(input, 0xc0, sizeof(input));
+        for (int i = 1; i <= n; i++)
+            scanf("%d", &input[i]);
+        t = 1;
+        while (t < n)
+            t <<= 1;
+        build(1, t, 1);
+        while (m--)
+        {
+            char cmd;
+            int x, y;
+            getchar();
+            scanf("%c", &cmd);
+            getchar();
+            scanf("%d%d", &x, &y);
+            if (cmd == 'U')
+                update(x, y);
+            else
+                printf("%d\n", query(x, y, 1, t, 1));
+        }
+    }
+    return 0;
 }
