@@ -1,4 +1,4 @@
-// Just a Hook HDU1698
+// Just a Hook, HDU1698
 
 /*Sample Input
 1

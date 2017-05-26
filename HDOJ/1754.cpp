@@ -1,4 +1,4 @@
-// I Hate It HDU1754
+// I Hate It, HDU1754
 
 /*Sample Input
 5 6

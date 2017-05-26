@@ -1,4 +1,4 @@
-// Prime Ring Problem HDU1016
+// Prime Ring Problem, HDU1016
 
 /*Sample Input
 6
