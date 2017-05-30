@@ -7,6 +7,8 @@
 - [x] Codeforces Round #412 (Div. 2)
 - [x] Codeforces Round #413
 - [x] Codeforces Round #414
+- [x] Codeforces Round #415 (Div. 2)
+- [x] Codeforces Round #416 (Div. 2)
 
 ## HDOJ
 - [X] C语言程序设计练习(2000~2032)
