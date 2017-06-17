@@ -11,15 +11,15 @@ int main()
     memset(r, 0x3f, sizeof(r));
     memset(c, 0x3f, sizeof(c));
     cin >> n >> m;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            cin >> maze[i][j];
     if (n <= m)
     {
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < m; j++)
-            {
-                cin >> maze[i][j];
                 r[i] = min(r[i], maze[i][j]);
-            }
             sum += r[i];
         }
         for (int j = 0; j < m; j++)
@@ -40,10 +40,7 @@ int main()
         for (int j = 0; j < m; j++)
         {
             for (int i = 0; i < n; i++)
-            {
-                cin >> maze[i][j];
-                c[i] = min(c[i], maze[i][j]);
-            }
+                c[j] = min(c[j], maze[i][j]);
             sum += c[j];
         }
         for (int i = 0; i < n; i++)
