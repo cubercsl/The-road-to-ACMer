@@ -29,7 +29,7 @@ int dfs(int x, int y)
 {
     int MAX = 0;
     if (dp[x][y])
-        return 0;
+        return dp[x][y];
     for (int i = 1; i <= k; i++)
         for (int j = 0; j < 4; j++)
         {
