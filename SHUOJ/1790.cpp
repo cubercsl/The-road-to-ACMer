@@ -13,16 +13,18 @@ struct node
 int main()
 {
     int n;
-    cin >> n;
-    for (int i = 0; i < n; i++)
-        cin >> ch[i].w >> ch[i].s;
-    sort(ch, ch + n);
-    int pre = 0, ans = -0x3f3f3f3f;
-    for (int i = 0; i < n - 1; i++)
+    while (cin >> n)
     {
-        pre += ch[i].w;
-        ans = max(ans, pre - ch[i + 1].s);
+        for (int i = 0; i < n; i++)
+            cin >> ch[i].w >> ch[i].s;
+        sort(ch, ch + n);
+        long long pre = 0, ans = -0x3f3f3f3f;
+        for (int i = 0; i < n; i++)
+        {
+            ans = max(ans, pre - ch[i].s);
+            pre += ch[i].w;
+        }
+        cout << ans << endl;
     }
-    cout << ans << endl;
     return 0;
 }
