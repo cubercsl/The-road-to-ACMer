@@ -167,7 +167,6 @@
 - Range Maximum/Minimum Query
 
 ## Computational Geometry
-- Computational Geometry
 - Basic Concept of Computational Geometry
 - Analytic Geometry
 - Line Intersection
