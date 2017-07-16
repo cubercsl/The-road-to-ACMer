@@ -14,10 +14,10 @@ const long double PI = acos(-1.0);
 struct Complex
 {
     long double x, y; //实部和虚部 x+yi
-    Complex(long double tx = 0.0, long double ty = 0.0)
+    Complex(long double _x = 0.0, long double _y = 0.0)
     {
-        x = tx;
-        y = ty;
+        x = _x;
+        y = _y;
     }
     Complex operator-(const Complex &b) const
     {
