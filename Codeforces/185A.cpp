@@ -14,28 +14,23 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
-const int maxn = 1e5 + 5;
+ll qpow(ll a, ll n)
+{
+    ll t = 1;
+    for (; n; n >>= 1, a = (a * a % mod))
+        if (n & 1) t = (t * a % mod);
+    return t;
+}
 
 int main()
 {
-    ll a[maxn];
-    int n;
+    ll n;
     while (cin >> n)
     {
-        bool ok = 0;
-        for (int i = 0; i < n; i++)
-            cin >> a[i];
-        sort(a, a + n);
-        for (int i = 0; i < n - 2; i++)
-            if (a[i] + a[i + 1] > a[i + 2])
-            {
-                ok = 1;
-                break;
-            }
-        if (ok)
-            cout << "YES" << endl;
-        else
-            cout << "NO" << endl;
+        ll tmp = qpow(2, n);
+        ll ans = ((1 + tmp) * tmp % mod);
+        ans = ans / 2 % mod;
+        cout << ans << endl;
     }
     return 0;
 }

@@ -11,25 +11,21 @@ typedef long double ld;
 typedef pair<int, int> PII;
 typedef vector<int> VI;
 const int INF = 0x3f3f3f3f;
-const int mod = 1e9 + 7;
+const ll mod = 1e9 + 7;
 const double eps = 1e-6;
 
 int main()
 {
-    string s;
-    while (cin >> s)
+    ll x, y, F[6], n;
+    while (    cin >> x >> y >> n)
     {
-        int cnt = 0;
-        int len = s.length();
-        for (int i = 0; i < len / 2; i++)
-            if (s[i] != s[len - i - 1])
-                cnt++;
-        if (cnt == 1)
-            cout << "YES" << endl;
-        else if (cnt == 0 && len % 2)
-            cout << "YES" << endl;
-        else
-            cout << "NO" << endl;
+        F[1] = x;
+        F[2] = y;
+        F[3] = y - x;
+        F[4] = -x;
+        F[5] = -y;
+        F[0] = x - y;
+        cout << (F[n % 6] + 100 * mod) % mod << endl;
     }
     return 0;
 }

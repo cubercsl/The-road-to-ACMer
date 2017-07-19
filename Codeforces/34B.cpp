@@ -14,28 +14,24 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
-const int maxn = 1e5 + 5;
-
+const int maxn = 102;
 int main()
 {
-    ll a[maxn];
-    int n;
-    while (cin >> n)
+    int n, m;
+    int a[maxn];
+    while (cin >> n >> m)
     {
-        bool ok = 0;
         for (int i = 0; i < n; i++)
             cin >> a[i];
         sort(a, a + n);
-        for (int i = 0; i < n - 2; i++)
-            if (a[i] + a[i + 1] > a[i + 2])
-            {
-                ok = 1;
+        int ans = 0;
+        for (int i = 0; i < m; i++)
+        {
+            if (a[i] > 0)
                 break;
-            }
-        if (ok)
-            cout << "YES" << endl;
-        else
-            cout << "NO" << endl;
+            ans += a[i];
+        }
+        cout << -ans << endl;
     }
     return 0;
 }

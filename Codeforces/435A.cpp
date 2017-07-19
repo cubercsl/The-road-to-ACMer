@@ -14,28 +14,29 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
-const int maxn = 1e5 + 5;
-
 int main()
 {
-    ll a[maxn];
-    int n;
-    while (cin >> n)
+    int n, m;
+    queue<int> q;
+    while (cin >> n >> m)
     {
-        bool ok = 0;
-        for (int i = 0; i < n; i++)
-            cin >> a[i];
-        sort(a, a + n);
-        for (int i = 0; i < n - 2; i++)
-            if (a[i] + a[i + 1] > a[i + 2])
-            {
-                ok = 1;
-                break;
-            }
-        if (ok)
-            cout << "YES" << endl;
-        else
-            cout << "NO" << endl;
+        while (n--)
+        {
+            int num;
+            cin >> num;
+            q.push(num);
+        }
+        int cnt = 1;
+        int now = 0;
+        while (!q.empty())
+        {
+            int tmp = q.front();
+            q.pop();
+            now += tmp;
+            if (now > m)
+                now = tmp, cnt++;
+        }
+        cout << cnt << endl;
     }
     return 0;
 }
