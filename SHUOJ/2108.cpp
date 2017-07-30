@@ -14,23 +14,22 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
-const int maxn = 25;
+const int maxn = 20;
 int n, m;
-ll a[maxn];
-ll ans;
+int ans;
+int a[maxn];
 
-inline ll lcm(ll a, ll b)
+void dfs(int i, int now , int dep)
 {
-    return a / __gcd(a, b) * b;
-}
-
-void dfs(int now, ll x, int dep)
-{
-    x = lcm(a[now], x);
-    if (dep & 1)ans += n / x;
-    else ans -= n / x;
-    for (int i = now + 1; i < m; i++)
-        dfs(i, x, dep + 1);
+    if (dep == m)
+    {
+        ans = max(ans, now);
+        return;
+    }
+    if (i == n)
+        return;
+    dfs(i + 1, now * a[i], dep + 1);
+    dfs(i + 1, now, dep);
 }
 
 int main()
@@ -39,13 +38,15 @@ int main()
     freopen("1.in", "r", stdin);
     freopen("1.out", "w", stdout);
 #endif
-    while (cin >> n >> m)
+    int t;
+    cin >> t;
+    while (t--)
     {
-        for (int i = 0; i < m; i++)
+        cin >> n >> m;
+        for (int i = 0; i < n; i++)
             cin >> a[i];
-        ans = 0;
-        for (int i = 0; i < m; i++)
-            dfs(i, a[i], 1);
+        ans = -INF;
+        dfs(0, 1, 0);
         cout << ans << endl;
     }
     return 0;
