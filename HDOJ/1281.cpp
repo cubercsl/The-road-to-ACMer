@@ -32,7 +32,7 @@ const double eps = 1e-6;
 const int maxn = 105;
 int n, m, k;
 int g[maxn][maxn];
-int linker[maxn];
+int linker[maxn], save[maxn];
 bool vis[maxn];
 bool dfs(int u)
 {
@@ -64,8 +64,8 @@ int hungary()
 int main()
 {
 #ifndef ONLINE_JUDGE
-    freopen("1.in", "r", stdin);
-    freopen("1.out", "w", stdout);
+//    freopen("1.in","r", stdin);
+//    freopen("1.out", "w", stdout);
 #endif
     fastin
     int kase = 0;
@@ -81,16 +81,21 @@ int main()
         int ans = hungary();
         int cnt = 0;
         for (int i = 0; i < n; i++)
+            save[i] = linker[i];
+        for (int i = 0; i < m; i++)
+        {
             for (int j = 0; j < m; j++)
+                linker[j] = save[j];
+            if (linker[i] != -1)
             {
-                if (g[i][j])
-                {
-                    g[i][j] = 0;
-                    if (hungary() < ans)
-                        cnt++;
-                    g[i][j] = 1;
-                }
+                int tmp = linker[i];
+                g[tmp][i] = 0, linker[i] = -1;
+                clr(vis, 0);
+                if (!dfs(tmp))
+                    cnt++;
+                g[tmp][i] = 1;
             }
+        }
         cout << "Board " << ++kase << " have " << cnt << " important blanks for " << ans << " chessmen." << endl;
     }
     return 0;
