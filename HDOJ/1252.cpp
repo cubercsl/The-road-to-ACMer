@@ -1,4 +1,4 @@
-// Hike on a Graph, HDU2152
+// Hike on a Graph, HDU1252
 
 /*Sample Input
 3 1 2 3
