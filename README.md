@@ -26,8 +26,8 @@
 - Branch and Bound
 - Heuristic Search
 - Iterative Deepening A\*
-- Memoization61
-- Randomization2
+- Memoization
+- Randomization
 - Genetic Algorithm
 
 ## Basic Algorithm
