@@ -35,20 +35,17 @@ const double eps = 1e-6;
 #define Lson l, m, lson
 #define Rson m + 1, r, rson
 
-const int maxn = 1e5 + 5;
+const int maxn = 2e4 + 5;
 PII a[maxn];
-int b[maxn << 1];
+vector<int> v;
 int val[maxn << 2];
 bool vis[maxn];
 
 void build(int l, int r, int rt)
 {
-    if (l == r)
-    {
-        val[rt] = -1;
-        return;
-    }
     val[rt] = -1;
+    if (l == r)
+        return;
     int m = (l + r) >> 1;
     build(Lson);
     build(Rson);
@@ -91,25 +88,25 @@ int main()
     while (c--)
     {
         int n;
-        int tot = 0;
         clr(vis, 0);
+        v.clear();
         scanf("%d", &n);
         for (int i = 0; i < n; i++)
         {
             scanf("%d%d", &a[i].X, &a[i].Y);
-            b[tot++] = a[i].X;
-            b[tot++] = a[i].Y;
+            v.pb(a[i].X);
+            v.pb(a[i].Y);
+            v.pb(a[i].Y + 1);
         }
-        sort(b, b + tot);
-        tot = unique(b, b + tot) - b;
+        sort(v.begin(), v.end());
+        int N = unique(v.begin(), v.end()) - v.begin();
         for (int i = 0; i < n; i++)
         {
-            a[i].X = lower_bound(b, b + tot, a[i].X) - b + 1;
-            a[i].Y = lower_bound(b, b + tot, a[i].Y) - b + 1;
+            a[i].X = lower_bound(v.begin(), v.begin() + N, a[i].X) - v.begin() + 1;
+            a[i].Y = lower_bound(v.begin(), v.begin() + N, a[i].Y) - v.begin() + 1;
             //printf("%d %d\n", a[i].X, a[i].Y);
         }
-        int N = n << 1;
-        build (1, N, 1);
+        build(1, N, 1);
         for (int i = 0; i < n; i++)
             Update(a[i].X, a[i].Y, i, 1, N, 1);
         int ans = 0;
@@ -126,3 +123,4 @@ int main()
     }
     return 0;
 }
+
