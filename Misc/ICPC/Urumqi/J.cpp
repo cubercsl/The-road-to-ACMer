@@ -1,15 +1,27 @@
-// six sheep
 #include <bits/stdc++.h>
 using namespace std;
+#define clr(a,x) memset(a, x, sizeof(a))
+#define mp(x,y) make_pair(x,y)
+#define pb(x) push_back(x)
+#define X first
+#define Y second
+#define fastin                    \
+    ios_base::sync_with_stdio(0); \
+    cin.tie(0);
 typedef long long ll;
+typedef long double ld;
+typedef pair<int, int> PII;
+typedef vector<int> VI;
 const int INF = 0x3f3f3f3f;
-const int NINF = 0xc0c0c0c0;
+const int mod = 1e9 + 7;
+const double eps = 1e-6;
+
 const int maxn = 20005;
 
 struct Edge
 {
     int from, to, cap, flow, cost;
-    Edge(int u, int v, int c, int f, int w):from(u), to(v), cap(c), flow(f), cost(w) {}
+    Edge(int u, int v, int c, int f, int w) : from(u), to(v), cap(c), flow(f), cost(w) {}
 };
 
 struct MCMF
@@ -46,17 +58,21 @@ struct MCMF
         a[s] = INF;
         queue<int> Q;
         Q.push(s);
-        while (!Q.empty()) {
+        while (!Q.empty())
+        {
             int u = Q.front();
             Q.pop();
             inq[u] = 0;
-            for (int i = 0; i < G[u].size(); i++) {
+            for (int i = 0; i < G[u].size(); i++)
+            {
                 Edge& e = edges[G[u][i]];
-                if (e.cap > e.flow && d[e.to] > d[u] + e.cost) {
+                if (e.cap > e.flow && d[e.to] > d[u] + e.cost)
+                {
                     d[e.to] = d[u] + e.cost;
                     p[e.to] = G[u][i];
                     a[e.to] = min(a[u], e.cap - e.flow);
-                    if (!inq[e.to]) {
+                    if (!inq[e.to])
+                    {
                         Q.push(e.to);
                         inq[e.to] = 1;
                     }
@@ -66,7 +82,8 @@ struct MCMF
         if (d[t] == INF) return false; // 当没有可增广的路时退出
         flow += a[t];
         cost += (ll)d[t] * (ll)a[t];
-        for (int u = t; u != s; u = edges[p[u]].from) {
+        for (int u = t; u != s; u = edges[p[u]].from)
+        {
             edges[p[u]].flow += a[t];
             edges[p[u] ^ 1].flow -= a[t];
         }
