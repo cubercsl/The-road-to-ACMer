@@ -21,11 +21,12 @@ struct MCMF
     int d[maxn]; //bellmanford 到源点距离
     int p[maxn]; //上一条弧
     int a[maxn]; //可改进量
+
+    void init(int n)
     {
         this->n = n;
         for (int i = 0; i < n; i++) G[i].clear();
         edges.clear();
-        void init(int n)
     }
     void AddEdge(int from, int to, int cap, int cost)
     {
