@@ -47,6 +47,7 @@ int main()
             for (int j = i; j <= n; j++)
             {
                 int sum = 0;
+                bool flag = 0;
                 for (int k = 1; k <= m; k++)
                 {
                     b[k] += a[j][k];
@@ -54,10 +55,11 @@ int main()
                     sum = max(sum, 0);
                     sum += b[k];
                     dp[k] = max(dp[k - 1] + b[k], sum - mm[k] + P);
-                    if (i == 1 && j == n && k == m && tot == sum)
+                    if (i == 1 && j == n && k == m && tot == sum && !flag)
                         ans = max(ans, sum - minv + P);
                     else
                         ans = max(ans, max(dp[k], sum));
+                    if (sum <= 0) flag = 1;
                 }
             }
         }
