@@ -1,14 +1,13 @@
-// Power Strings, POJ2406
+// Seek the Name, Seek the Fame, POJ2752
 
 /*Sample Input
-abcd
-aaaa
-ababab
-.
+ababcababababcabab
+aaaaa
 */
 
-#include <cstdio>
 #include <cstring>
+#include <iostream>
+#include <string>
 #include <vector>
 using namespace std;
 #define clr(a, x) memset(a, x, sizeof(a))
@@ -27,38 +26,40 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
-const int maxn = 1e6 + 5;
-char s[maxn];
-
+const int maxn = 1 << 20;
 int ne[maxn];
-void initkmp(char x[], int m)
+void getfail(const string& s)
 {
-    int i, j;
+    int i, j, m = s.length();
     j = ne[0] = -1;
     i = 0;
     while (i < m)
     {
-        while (j != -1 && x[i] != x[j])
+        while (j != -1 && s[i] != s[j])
             j = ne[j];
         ne[++i] = ++j;
     }
 }
 
+void print(int len)
+{
+    if (!ne[len]) return;
+    print(ne[len]);
+    cout << ne[len] << " ";
+}
+
 int main()
 {
 #ifndef ONLINE_JUDGE
-    // freopen("1.in", "r", stdin);
-    // freopen("1.out", "w", stdout);
+    freopen("1.in", "r", stdin);
+    freopen("1.out", "w", stdout);
 #endif
-    while (~scanf("%s", s))
+    string s;
+    while (cin >> s)
     {
-        if (s[0] == '.')
-            break;
-        int len = strlen(s);
-        initkmp(s, len);
-        // for (int i = 0; i <= len; i++)
-        //     printf("%d%c", ne[i], i == len ? '\n' : ' ');
-        printf("%d\n", len % (len - ne[len]) ? 1 : len / (len - ne[len]));
+        getfail(s);
+        print(s.length());
+        cout << s.length() << endl;
     }
     return 0;
 }
