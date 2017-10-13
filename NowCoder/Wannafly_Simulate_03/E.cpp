@@ -28,6 +28,7 @@ int main()
     int n, k;
     while (~scanf("%d%d", &n, &k))
     {
+        for (int i = 0; i < maxn; i++) G[i].clear();
         for (int i = 0; i < n; i++)
         {
             scanf("%d", a + i);
@@ -70,8 +71,7 @@ int main()
                         if (!q.empty()) t = q.front() - t - 1, now += t;
                     }
                 }
-                if (!q.empty())
-                    ans = max(ans, q.back() - q.front() + 1 - (k - now));
+                ans = max(ans, (int)q.size());
             }
         }
         printf("%d\n", ans);
