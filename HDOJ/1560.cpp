@@ -27,6 +27,7 @@ const int INF = 0x3f3f3f3f;
 const int mod = 1e9 + 7;
 const double eps = 1e-6;
 
+<<<<<<< HEAD
 string a[10];
 const char t[] = "ACGT";
 void dfs(int id, int len[], int dep, const int& n, int& ans)
@@ -55,6 +56,38 @@ void dfs(int id, int len[], int dep, const int& n, int& ans)
         if (flag) dfs(id + 1, pos, dep + 1, n, ans);
         if (~ans) return;
     }
+=======
+const char c[] = "ACGT";
+string s[10];
+
+int get_h(int pos[], int n)
+{
+    int ret = 0;
+    for (int i = 0; i < n; i++)
+        ret = max(ret, (int)s[i].length() - pos[i]);
+    return ret;
+}
+
+bool dfs(int id, int pos[], int n, int dep)
+{
+    int h = get_h(pos, n);
+    if (id + h > dep) return false;
+    if (!h) return true;
+    int tmp[10];
+    for (int i = 0; i < 4; i++)
+    {
+        bool flag = 0;
+        for (int j = 0; j < n; j++)
+        {
+            if (s[j][pos[j]] == c[i])
+                tmp[j] = pos[j] + 1, flag = 1;
+            else
+                tmp[j] = pos[j];
+        }
+        if (flag && dfs(id + 1, tmp, n, dep)) return true;
+    }
+    return false;
+>>>>>>> 66b73dfdbd3702746707340711cbb0525ecebda7
 }
 
 int main()
@@ -64,6 +97,7 @@ int main()
     freopen("1.out", "w", stdout);
 #endif
     int T;
+<<<<<<< HEAD
     int pos[10];
     cin >> T;
     while (T--)
@@ -86,5 +120,24 @@ int main()
         }
         printf("%d\n", ans);
     }
+=======
+    cin >> T;
+    while (T--)
+    {
+        int n, dep = 0;
+        int pos[10];
+        cin >> n;
+        for (int i = 0; i < n; i++)
+        {
+            cin >> s[i];
+            dep = max(dep, (int)s[i].length());
+            pos[i] = 0;
+        }
+        for (; !dfs(0, pos, n, dep); dep++)
+            ;
+        cout << dep << endl;
+    }
+
+>>>>>>> 66b73dfdbd3702746707340711cbb0525ecebda7
     return 0;
 }
