@@ -22,19 +22,16 @@ int main()
     freopen("1.in", "r", stdin);
     freopen("1.out", "w", stdout);
 #endif
-    string s;
-    while (cin >> s)
+    int a[1005];
+    int n;
+    while (cin >> n)
     {
-        int _0 = 0, _1 = 0;
-        for (auto t : s)
-        {
-            if (t == '0' && _1) _0++;
-            if (t == '1') _1++;
-        }
-        if (_0 > 5)
-            cout << "yes" << endl;
-        else
-            cout << "no" << endl;
+        for (int i = 0; i < n; i++)
+            cin >> a[i];
+        int cnt = 0;
+        for (int i = 1; i < n - 1; i++)
+            if (a[i] > a[i - 1] && a[i] > a[i + 1] || a[i] < a[i - 1] && a[i] < a[i + 1]) cnt++;
+        cout << cnt << endl;
     }
     return 0;
 }
