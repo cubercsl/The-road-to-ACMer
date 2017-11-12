@@ -22,19 +22,23 @@ int main()
     freopen("1.in", "r", stdin);
     freopen("1.out", "w", stdout);
 #endif
+    int n;
     string s;
-    while (cin >> s)
+    while (cin >> n)
     {
-        int _0 = 0, _1 = 0;
-        for (auto t : s)
+        cin >> s;
+        int L = 0, R = 0, U = 0, D = 0;
+        for (auto c : s)
         {
-            if (t == '0' && _1) _0++;
-            if (t == '1') _1++;
+            switch (c)
+            {
+            case 'L': L++; break;
+            case 'R': R++; break;
+            case 'U': U++; break;
+            case 'D': D++; break;
+            }
         }
-        if (_0 > 5)
-            cout << "yes" << endl;
-        else
-            cout << "no" << endl;
+        cout << min(L, R) * 2 + min(U, D) * 2 << endl;
     }
     return 0;
 }
