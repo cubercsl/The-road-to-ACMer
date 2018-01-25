@@ -4,7 +4,7 @@ using namespace std;
 const int maxn = 102;
 const char step[] = "ULRD";
 char maze[maxn][maxn];
-int ans[maxn];
+int ans[maxn * maxn];
 bool vis[maxn][maxn];
 bool flag;
 int n, m;
@@ -60,5 +60,3 @@ int main()
     cout << endl;
     return 0;
 }
-
-// Verdict: Wrong Answer
