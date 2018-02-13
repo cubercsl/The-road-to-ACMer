@@ -41,7 +41,6 @@ int main()
                     c = (10 - c) % 10;
                     for (int a = 0; a <= c; a++)
                         for (int b = 0; b <= a; b++)
-
                             dp[i + 1][(k - a + 10) % 10][(10 - b) % 10] = min(dp[i + 1][(k - a + 10) % 10][(10 - b) % 10], dp[i][j][k] + c);
                 }
         cout << dp[n][0][0] << endl;
