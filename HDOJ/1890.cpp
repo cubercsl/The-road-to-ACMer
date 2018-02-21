@@ -67,18 +67,13 @@ struct Splay
         return x;
     }
 
-    void update(int x)
-    {
-        if (!x) return;
-        swap(ch[x][0], ch[x][1]);
-        flip[x] ^= 1;
-    }
-
     void pushdown(int x)
     {
         if (flip[x])
         {
-            update(ch[x][0]), update(ch[x][1]);
+            swap(ch[x][0], ch[x][1]);
+            if (ch[x][0]) flip[ch[x][0]] ^= 1;
+            if (ch[x][1]) flip[ch[x][1]] ^= 1;
             flip[x] ^= 1;
         }
     }
@@ -98,7 +93,7 @@ struct Splay
         fa[x] = fa[y];
         ch[x][d] = y;
         fa[y] = x;
-        pushup(y), pushup(x);
+        pushup(y);
     }
 
     void splay(int x, int goal = 0)
@@ -182,7 +177,7 @@ struct Splay
     {
         splay(id[x]);
         int ret = sz[ch[root][0]] + 1;
-        update(ch[root][0]);
+        flip[ch[root][0]] ^= 1;
         erase(root);
         return ret + x;
     }
