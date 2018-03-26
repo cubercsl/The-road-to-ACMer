@@ -1,4 +1,4 @@
-t = input();
+t = input()
 while True:
     try:
         n = int(input())
