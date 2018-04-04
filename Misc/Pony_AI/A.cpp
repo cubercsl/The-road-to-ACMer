@@ -50,13 +50,13 @@ struct SAM
     int dfs(int u)
     {
         if (~dp[u]) return dp[u];
-        set<int> s;
+        bool vis[30];
+        memset(vis, 0, sizeof(vis));
         for (int i = 0; i < 26; i++)
             if (~ch[u][i])
-                s.insert(dfs(ch[u][i]));
+                vis[dfs(ch[u][i])] = true;
         for (int i = 0;; i++)
-            if (s.find(i) == s.end())
-                return dp[u] = i;
+            if (!vis[i]) return dp[u] = i;
     }
 } sam;
 
