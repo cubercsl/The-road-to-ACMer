@@ -29,9 +29,9 @@ int main()
     int l = 0, r = 0;
     while (r < n)
     {
+        r++;
         while (r < n && a[r] == 1) r++;
         while (l < r) dp[l++] = r;
-        r++;
     }
     pre[0] = a[0];
     for (int i = 1; i < n; i++) pre[i] = pre[i - 1] + a[i];
