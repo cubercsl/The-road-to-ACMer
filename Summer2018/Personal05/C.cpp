@@ -134,40 +134,35 @@ int main()
 
 /****************************************************************************************************/
 
+const int mod = 1e9 + 7;
+const int N = 1 << 20;
+ll dp[N][3];
+
+int solve(int x, int y, int n)
+{
+    // G不超过x个,R不超过y个。
+    dp[1][0] = x != 0;
+    dp[1][1] = y != 0;
+    dp[1][2] = 1;
+    for (int i = 2; i <= n; i++)
+    {
+        ll tmp = (dp[i - 1][0] + dp[i - 1][1] + dp[i - 1][2]) % mod;
+        dp[i][0] = dp[i][1] = dp[i][2] = tmp;
+        if (i == x + 1) dp[i][0] = (dp[i][0] - 1 + mod) % mod;
+        if (i > x + 1) dp[i][0] = (dp[i][0] - dp[i - x - 1][1] - dp[i - x - 1][2] + mod + mod) % mod;
+
+        if (i == y + 1) dp[i][1] = (dp[i][1] - 1 + mod) % mod;
+        if (i > y + 1) dp[i][1] = (dp[i][1] - dp[i - y - 1][0] - dp[i - y - 1][2] + mod + mod) % mod;
+    }
+    return (dp[n][0] + dp[n][1] + dp[n][2]) % mod;
+}
+
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int n, m, k;
+    while (~scanf("%d%d%d", &n, &m, &k))
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
+        ll ans = (solve(n, k, n) - solve(m - 1, k, n) + mod) % mod;
+        printf("%lld\n", ans);
     }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
-        {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
-        }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
-    }
-    W(ans);
 }

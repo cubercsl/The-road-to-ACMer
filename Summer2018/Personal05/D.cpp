@@ -136,38 +136,19 @@ int main()
 
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int n;
+    ll a, b;
+    R(n, a, b);
+    map<ll, ll> dd;
+    map<PII, ll> pp;
+    ll ans = 0;
+    for (int i = 0; i < n; i++)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
+        static ll x, vx, vy;
+        R(x, vx, vy);
+        ans += dd[vy - a * vx] - pp[make_pair(vx, vy)];
+        dd[vy - a * vx]++;
+        pp[make_pair(vx, vy)]++;
     }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
-        {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
-        }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
-    }
-    W(ans);
+    W(ans * 2);
 }

@@ -134,40 +134,61 @@ int main()
 
 /****************************************************************************************************/
 
+typedef unsigned long long ull;
+const int N = 1 << 18;
+namespace Hash
+{
+ull p[N];
+const static ull mod = 1e9 + 7;
+void init()
+{
+    p[0] = 1;
+    for (int i = 1; i < N; i++) p[i] = p[i - 1] * mod;
+}
+vector<ull> make(const string& s)
+{
+    int n = s.length();
+    vector<ull> v(n + 1);
+    for (int i = 1; i <= n; i++) v[i] = v[i - 1] * mod + s[i - 1];
+    return v;
+}
+ull get(int l, int r, const vector<ull>& h) { return h[r] - h[l] * p[r - l]; }
+}; // namespace Hash
+
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int m, l;
+    Hash::init();
+    while (cin >> m >> l)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
-    }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
+        string s;
+        cin >> s;
+        int n = s.length();
+        vector<ull> h = Hash::make(s);
+        unordered_map<ull, int> M;
+        int ans = 0;
+        for (int i = 0; i < l && i + m * l <= n; i++)
         {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
+            M.clear();
+            for (int j = 0; j < m; j++)
+            {
+                ull tmp = Hash::get(i + j * l, i + (j + 1) * l, h);
+                debug(s.substr(i + j * l, l));
+                M[tmp]++;
+            }
+            if (M.size() == m) ans++;
+            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
+            {
+                ull tmp = Hash::get(i + j, i + j + l, h);
+                debug(s.substr(i, l));
+                M[tmp]--;
+                if (M[tmp] == 0) M.erase(tmp);
+                tmp = Hash::get(i + j + m * l, i + j + (m + 1) * l, h);
+                debug(s.substr(i + j + m * l, l));
+                M[tmp]++;
+                if (M.size() == m) ans++;
+            }
         }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
+        cout << ans << endl;
     }
-    W(ans);
 }

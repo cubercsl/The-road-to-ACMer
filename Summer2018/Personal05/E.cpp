@@ -136,38 +136,50 @@ int main()
 
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int n, m, q;
+    R(n, m, q);
+    VI fa(n), val(n);
+    iota(fa.begin(), fa.end(), 0);
+    function<int(int)> find = [&](int x) {
+        if (fa[x] == x) return x;
+        int tmp = find(fa[x]);
+        val[x] ^= val[fa[x]];
+        return fa[x] = tmp;
+    };
+    auto unite = [&](int x, int y, bool d) {
+        int tx = find(x), ty = find(y);
+        if (tx == ty) return (val[x] ^ val[y]) == d;
+        fa[ty] = tx;
+        val[ty] = val[x] ^ val[y] ^ d;
+        return true;
+    };
+    unordered_map<string, int> dic;
+    for (int i = 0; i < n; i++)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
+        static string s;
+        cin >> s;
+        dic[s] = i;
     }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
+    for (int i = 0; i < m; i++)
     {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
-        {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
-        }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
+        static int op;
+        static string s, t;
+        cin >> op >> s >> t;
+        --op;
+        int x = dic[s], y = dic[t];
+        if (unite(x, y, op))
+            W("YES");
+        else
+            W("NO");
     }
-    W(ans);
+    for (int i = 0; i < q; i++)
+    {
+        static string s, t;
+        cin >> s >> t;
+        int x = dic[s], y = dic[t];
+        if (find(x) != find(y))
+            W(3);
+        else
+            W((val[x] ^ val[y]) + 1);
+    }
 }

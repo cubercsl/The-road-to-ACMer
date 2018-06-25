@@ -134,40 +134,44 @@ int main()
 
 /****************************************************************************************************/
 
+const int N = 1005;
+int dp[N][N];
+char s[N][N];
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int n;
+    while (~scanf("%d", &n) && n)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
-    }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
+        memset(dp, 0, sizeof(dp));
+        for (int i = 0; i < n; i++) scanf("%s", s[i]);
+        for (int i = 0; i < n; i++) dp[0][i] = dp[i][n - 1] = 1;
+        if (n == 1)
+        {
+            puts("1");
+            continue;
+        }
+        for (int i = 1; i < n; i++)
+            for (int j = n - 2; ~j; j--)
+            {
+                int t = dp[i - 1][j + 1];
+                dp[i][j] = 1;
+                for (int k = 0; k < t; k++)
+                {
+                    if (s[i - 1 - k][j] == s[i][j + 1 + k])
+                        dp[i][j]++;
+                    else
+                        break;
+                }
+            }
+        /*
         for (int i = 0; i < n; i++)
-        {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
-        }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
+            for (int j = 0; j < n; j++)
+                printf("%d%c", dp[i][j], " \n"[j == n - 1]);
+        */
+        int ans = 0;
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                ans = max(ans, dp[i][j]);
+        printf("%d\n", ans);
     }
-    W(ans);
 }

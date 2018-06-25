@@ -133,41 +133,88 @@ int main()
 }
 
 /****************************************************************************************************/
+const int maxn = 1 << 16;
+vector<int> G[maxn];
+int pre[maxn], lowlink[maxn], sccno[maxn], dfs_clock, scc_cnt;
+stack<int> S;
+inline void add_edge(int u, int v) { G[u].push_back(v); }
+void dfs(int u)
+{
+    pre[u] = lowlink[u] = ++dfs_clock;
+    S.push(u);
+    for (auto& v : G[u])
+    {
+        if (!pre[v])
+        {
+            dfs(v);
+            lowlink[u] = min(lowlink[u], lowlink[v]);
+        }
+        else if (!sccno[v])
+            lowlink[u] = min(lowlink[u], pre[v]);
+    }
+    if (lowlink[u] == pre[u])
+    {
+        scc_cnt++;
+        for (;;)
+        {
+            int x = S.top();
+            S.pop();
+            sccno[x] = scc_cnt;
+            if (x == u) break;
+        }
+    }
+}
+void find_scc(int n)
+{
+    dfs_clock = 0, scc_cnt = 0;
+    memset(sccno, 0, sizeof(sccno)), memset(pre, 0, sizeof(pre));
+    for (int i = 0; i < n; i++)
+        if (!pre[i]) dfs(i);
+}
+
+struct Node
+{
+    int x, y, r, c;
+};
+
+bool judge(const Node& a, const Node& b)
+{
+    ll d2 = 1LL * (a.x - b.x) * (a.x - b.x) + 1LL * (a.y - b.y) * (a.y - b.y);
+    return 1LL * a.r * a.r >= d2;
+}
+
+const int INF = 0x3f3f3f3f;
 
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    int T;
+    cin >> T;
+    int kase = 0;
+    while (T--)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
-    }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
+        int n;
+        cin >> n;
+        for (int i = 0; i < n; i++) G[i].clear();
+        vector<Node> v(n);
+        for (auto& t : v) cin >> t.x >> t.y >> t.r >> t.c;
         for (int i = 0; i < n; i++)
-        {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
-        }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
+            for (int j = 0; j < n; j++)
+            {
+                if (i == j) continue;
+                if (judge(v[i], v[j])) add_edge(i, j);
+            }
+        find_scc(n);
+        vector<int> dp(scc_cnt + 1, INF);
+        dp[0] = 0;
+        for (int i = 0; i < n; i++)
+            dp[sccno[i]] = min(dp[sccno[i]], v[i].c);
+        for (int u = 0; u < n; u++)
+            for (auto& v : G[u])
+                if (sccno[u] != sccno[v])
+                    dp[sccno[v]] = 0;
+        ll ans = 0;
+        for (int i = 1; i <= scc_cnt; i++) ans += dp[i];
+        cout << "Case #" << ++kase << ": ";
+        cout << ans << endl;
     }
-    W(ans);
 }

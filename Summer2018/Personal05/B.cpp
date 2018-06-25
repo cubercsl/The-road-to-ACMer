@@ -136,38 +136,38 @@ int main()
 
 void go()
 {
-    string s, t;
-    cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
-    {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
-    }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
-    {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
+    int n, m;
+    R(n, m);
+    vector<VL> s(n + 2, VL(m + 2));
+    vector<vector<VL> > dp(4, vector<VL>(n + 2, VL(m + 2)));
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++) cin >> s[i][j];
+    for (int i = 1; i <= n; i++)
+        for (int j = 1; j <= m; j++)
+            dp[0][i][j] = max(dp[0][i - 1][j], dp[0][i][j - 1]) + s[i][j];
+    for (int i = n; i; i--)
+        for (int j = m; j; j--)
+            dp[1][i][j] = max(dp[1][i + 1][j], dp[1][i][j + 1]) + s[i][j];
+    for (int i = n; i; i--)
+        for (int j = 1; j <= m; j++)
+            dp[2][i][j] = max(dp[2][i + 1][j], dp[2][i][j - 1]) + s[i][j];
+    for (int i = 1; i <= n; i++)
+        for (int j = m; j; j--)
+            dp[3][i][j] = max(dp[3][i - 1][j], dp[3][i][j + 1]) + s[i][j];
+    ll ans = 0;
+    debug(dp[0]);
+    debug(dp[1]);
+    debug(dp[2]);
+    debug(dp[3]);
+    for (int i = 2; i < n; i++)
+        for (int j = 2; j < m; j++)
         {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
+            ll t1 = dp[0][i - 1][j] + dp[1][i + 1][j] + dp[2][i][j - 1] + dp[3][i][j + 1];
+            debug(dp[0][i - 1][j], dp[1][i + 1][j], dp[2][i][j - 1], dp[3][i][j + 1]);
+            ll t2 = dp[0][i][j - 1] + dp[1][i][j + 1] + dp[2][i + 1][j] + dp[3][i - 1][j];
+            debug(dp[0][i][j - 1], dp[1][i][j + 1], dp[2][i + 1][j], dp[3][i - 1][j]);
+            debug(t1, t2);
+            ans = max({ans, t1, t2});
         }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
-    }
     W(ans);
 }

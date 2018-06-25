@@ -136,38 +136,52 @@ int main()
 
 void go()
 {
-    string s, t;
+    int n;
+    cin >> n;
+    string s;
     cin >> s;
-    vector<pair<char, int> > v, v1;
-    for (auto& ch : s)
+    if (n == 1)
     {
-        if (t.size() && t.back() != ch) v.push_back({t.back(), t.size()}), t.clear();
-        t.push_back(ch);
+        if (s == "0")
+        {
+            W("No");
+            return;
+        }
+        W("Yes");
+        return;
     }
-    if (t.size()) v.push_back({t.back(), t.size()});
-    int ans = 0;
-    while (v.size() > 1)
+    if (n == 2)
     {
-        int n = v.size();
-        for (int i = 0; i < n; i++)
+        if (s == "11" || s == "00")
         {
-            if (i == 0 || i == n - 1)
-                v[i].Y--;
-            else
-                v[i].Y -= 2;
-            v[i].Y = max(v[i].Y, 0);
+            W("No");
+            return;
         }
-        v1.clear();
-        for (auto& it : v)
-        {
-            if (it.Y == 0) continue;
-            if (v1.size() && v1.back().X == it.X)
-                v1.back().Y+= it.Y;
-            else
-                v1.push_back(it);
-        }
-        swap(v, v1);
-        ans++;
+        W("Yes");
+        return;
     }
-    W(ans);
+    s = '0' + s + '0';
+    n += 2;
+    for (int i = 1; i + 1 < n; i++)
+    {
+        if (s[i - 1] == '1' && s[i] == '1')
+        {
+            W("No");
+            return;
+        }
+        if (s[i] == '1' && s[i + 1] == '1')
+        {
+            W("No");
+            return;
+        }
+    }
+    for (int i = 1; i + 1 < n; i++)
+    {
+        if (s[i - 1] == '0' && s[i] == '0' && s[i + 1] == '0')
+        {
+            W("No");
+            return;
+        }
+    }
+    W("Yes");
 }
