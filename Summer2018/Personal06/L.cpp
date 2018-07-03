@@ -134,63 +134,27 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
-
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
-    {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
-        {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
-        }
-        cout << ans << endl;
-    }
+    int n, k;
+    R(n, k);
+    VL a(n + 1), sum(n + 1);
+    for (int i = 1; i <= n; i++) R(a[i]);
+    for (int i = 1; i <= n; i++) sum[i] = sum[i - 1] + a[i];
+
+    auto check = [&](ll x) {
+        vector<VI> dp(n + 1, VI(k + 1));
+        dp[0][0] = 1;
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < k; j++)
+                if (dp[i][j])
+                    for (int p = i + 1; p <= n; p++)
+                        if (((sum[p] - sum[i]) & x) == x) dp[p][j + 1] = 1;
+        return dp[n][k];
+    };
+
+    ll ans = 0;
+    for (int i = 62; ~i; i--)
+        if (check(ans | (1LL << i))) ans |= (1LL << i);
+    W(ans);
 }

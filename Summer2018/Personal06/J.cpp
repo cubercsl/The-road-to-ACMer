@@ -134,63 +134,35 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
-
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    int n;
+    cin >> n;
+    string s;
+    VL a(10);
+    VI lead(10);
+    for (int i = 0; i < n; i++)
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
-        {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
-        }
-        cout << ans << endl;
+        R(s);
+        int m = s.length();
+        int tmp = 1;
+        for (int j = m - 1; ~j; j--, tmp *= 10) a[s[j] - 'a'] += tmp;
+        lead[s[0] - 'a'] = 1;
     }
+    vector<pair<ll, int>> p(10);
+    for (int i = 0; i < 10; i++) p[i] = {a[i], i};
+    sort(p.begin(), p.end(), greater<pair<ll, int>>());
+    bool used = 0;
+    ll ans = 0;
+    int cur = 1;
+    for (auto& t : p)
+    {
+        if (!used && !lead[t.Y])
+        {
+            used = 1;
+            continue;
+        }
+        ans += 1LL * t.X * (cur++);
+    }
+    W(ans);
 }

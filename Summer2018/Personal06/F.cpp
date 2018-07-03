@@ -134,63 +134,35 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
-
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
-    {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
+    int n, m;
+    R(n, m);
+    VI a(n);
+    R(a);
+    vector<VI> v(2);
+    function<void(int, int, int, bool)> dfs = [&](int l, int r, int cur, bool d) {
+        if (l == r)
         {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
+            v[d].push_back(cur);
+            return;
         }
-        cout << ans << endl;
+        dfs(l + 1, r, cur, d);
+        dfs(l + 1, r, (cur + a[l]) % m, d);
+    };
+
+    dfs(0, n / 2, 0, 0);
+    dfs(n / 2, n, 0, 1);
+    my_sort_unique(v[0]);
+    my_sort_unique(v[1]);
+    int ans = 0;
+    for (auto& t : v[0])
+    {
+        ans = max(ans, (t + *v[1].rbegin()) % m);
+        auto p = upper_bound(v[1].begin(), v[1].end(), m - t - 1);
+        if (p == v[1].begin()) continue;
+        --p;
+        ans = max(ans, (t + *p) % m);
     }
+    W(ans);
 }

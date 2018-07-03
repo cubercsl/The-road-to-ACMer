@@ -134,63 +134,80 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
 const int N = 1 << 18;
-struct Hash
+
+struct Edge
 {
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
+    int from, to;
+    ll dist;
 };
 
-ull Hash::p[N];
+struct HeapNode
+{
+    ll d;
+    int u;
+    bool operator<(const HeapNode& rhs) const
+    {
+        return d > rhs.d;
+    }
+};
+
+vector<Edge> edges;
+vector<int> G[N];
+
+bool vis[N];
+ll d[N];
+
+void add_edge(int from, int to, ll dist)
+{
+    edges.push_back({from, to, dist});
+    G[from].push_back(edges.size() - 1);
+}
+
+void Dijkstra(int s, int n)
+{
+    priority_queue<HeapNode> q;
+    for (int i = 0; i <= n; i++) d[i] = 1e18;
+    d[s] = 0;
+    memset(vis, 0, sizeof(vis));
+    q.push({0, s});
+    while (!q.empty())
+    {
+        HeapNode x = q.top();
+        q.pop();
+        int u = x.u;
+        if (vis[u]) continue;
+        vis[u] = true;
+        for (auto& id : G[u])
+        {
+            Edge& e = edges[id];
+            if (!vis[e.to] && d[e.to] > d[u] + e.dist)
+            {
+                d[e.to] = d[u] + e.dist;
+                q.push({d[e.to], e.to});
+            }
+        }
+    }
+}
 
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    int n, m;
+    R(n, m);
+    while (m--)
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
-        {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
-        }
-        cout << ans << endl;
+        static int u, v;
+        static ll w;
+        R(u, v, w);
+        add_edge(u, v, w * 2);
+        add_edge(v, u, w * 2);
     }
+    for (int i = 1; i <= n; i++)
+    {
+        static ll a;
+        R(a);
+        add_edge(0, i, a);
+    }
+    Dijkstra(0, n);
+    for (int i = 1; i <= n; i++) cout << d[i] << " ";
 }

@@ -134,63 +134,65 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
+#define lson rt << 1
+#define rson rt << 1 | 1
 
-ull Hash::p[N];
+const int N = 1 << 21;
+VL G[N], pre[N];
+int d[N];
+
+void dfs(int rt, const int& n)
+{
+    if (rt > n) return;
+    dfs(lson, n), dfs(rson, n);
+    int pl = 0, pr = 0;
+    VL &A = G[lson], &B = G[rson], &C = G[rt];
+    int a = d[lson], b = d[rson];
+    int sl = A.size(), sr = B.size();
+    C.push_back(0);
+    while (pl < sl && pr < sr)
+    {
+        if (A[pl] + a < B[pr] + b)
+            C.push_back(A[pl++] + a);
+        else
+            C.push_back(B[pr++] + b);
+    }
+    while (pl < sl) C.push_back(A[pl++] + a);
+    while (pr < sr) C.push_back(B[pr++] + b);
+    pre[rt].push_back(0);
+    for (int i = 1; i < C.size(); i++) pre[rt].push_back(pre[rt][i - 1] + C[i]);
+}
+
+ll calc(int a, int h, const int& n)
+{
+    if (h < 0 || a > n || a == 0) return 0;
+    int pos = upper_bound(G[a].begin(), G[a].end(), h) - G[a].begin() - 1;
+    return ~pos ? (ll)h * (pos + 1) - pre[a][pos] : 0;
+}
+
+ll solve(int a, int h, const int& n)
+{
+    ll ans = 0;
+    ans += calc(a, h, n);
+    while (a > 1 && (h -= d[a]) > 0)
+    {
+        ans += h;
+        ans += calc(a ^ 1, h - d[a ^ 1], n);
+        a >>= 1;
+    }
+    return ans;
+}
 
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    int n, m;
+    R(n, m);
+    for (int i = 1; i < n; i++) R(d[i + 1]);
+    dfs(1, n);
+    while (m--)
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
-        {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
-        }
-        cout << ans << endl;
+        static int a, h;
+        R(a, h);
+        W(solve(a, h, n));
     }
 }

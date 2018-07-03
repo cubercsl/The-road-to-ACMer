@@ -134,63 +134,107 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
+const int N = 1 << 20;
+vector<PII> G[N];
 
-ull Hash::p[N];
+int pre[N], lowlink[N], sccno[N], dfs_clock, scc_cnt;
+stack<int> S;
+void dfs(int u)
+{
+    pre[u] = lowlink[u] = ++dfs_clock;
+    S.push(u);
+    for (auto& e : G[u])
+    {
+        int& v = e.X;
+        if (!pre[v])
+        {
+            dfs(v);
+            lowlink[u] = min(lowlink[u], lowlink[v]);
+        }
+        else if (!sccno[v])
+            lowlink[u] = min(lowlink[u], pre[v]);
+    }
+    if (lowlink[u] == pre[u])
+    {
+        scc_cnt++;
+        for (;;)
+        {
+            int x = S.top();
+            S.pop();
+            sccno[x] = scc_cnt;
+            if (x == u) break;
+        }
+    }
+}
+void find_scc(int n)
+{
+    dfs_clock = 0, scc_cnt = 0;
+    memset(sccno, 0, sizeof(sccno)), memset(pre, 0, sizeof(sccno));
+    for (int i = 0; i < n; i++)
+        if (!pre[i]) dfs(i);
+}
+
+ll sum[N];
+
+ll f(int x)
+{
+    int l = 0, r = x;
+    ll t;
+    while (l <= r)
+    {
+        ll m = l + r >> 1;
+        if (x - m * (m + 1) / 2 >= 0)
+            t = m, l = m + 1;
+        else
+            r = m - 1;
+    }
+    return x * (t + 1) - sum[t];
+}
+
+ll c[N];
+vector<PII> g[N];
+ll dp[N];
+
+ll DFS(int u)
+{
+    if (~dp[u]) return dp[u];
+    ll& ret = dp[u];
+    ret = 0;
+    for (auto e : g[u])
+    {
+        int v = e.X, w = e.Y;
+        ret = max(ret, DFS(v) + w);
+    }
+    ret += c[u];
+    return ret;
+}
 
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    memset(dp, -1, sizeof(dp));
+    int n, m;
+    for (int i = 1; i < N; i++) sum[i] = sum[i - 1] + i * (ll)(i + 1) / 2;
+    R(n, m);
+    while (m--)
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
-        {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
-        }
-        cout << ans << endl;
+        static int x, y, w;
+        R(x, y, w);
+        --x, --y;
+        G[x].push_back({y, w});
     }
+    find_scc(n);
+    for (int u = 0; u < n; u++)
+        for (auto& e : G[u])
+        {
+            int v = e.X, w = e.Y;
+            int &uu = sccno[u], &vv = sccno[v];
+            if (uu == vv)
+                c[uu] += f(w);
+            else
+                g[uu].push_back({vv, w});
+        }
+    int s;
+    R(s);
+    s = sccno[--s];
+    W(DFS(s));
 }

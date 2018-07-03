@@ -134,63 +134,60 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
+const int N = 1 << 17;
+const int mod = 1e9 + 7;
+ll Pow(ll a, ll n)
 {
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
+    ll t = 1;
+    for (; n; n >>= 1, (a *= a) %= mod)
+        if (n & 1) (t *= a) %= mod;
+    return t;
+}
 
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    vector<int> vis(N);
+    VI prime;
+    for (int i = 2; i < N; i++)
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
+        if (!vis[i])
+            prime.push_back(i);
+        for (auto& t : prime)
         {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
+            if (i * t > N) break;
+            vis[i * t] = 1;
+            if (i % t == 0) break;
         }
-        cout << ans << endl;
     }
+    ll x, y;
+    R(x, y);
+    VI d;
+    if (y % x)
+    {
+        W(0);
+        return;
+    }
+    ll n = y / x;
+    ll m = n;
+    for (auto& t : prime)
+    {
+        if (t > m / t) break;
+        if (m % t == 0)
+        {
+            d.push_back(t);
+            while (m % t == 0) m /= t;
+        }
+    }
+    if (m != 1) d.push_back(m);
+    int t = d.size();
+    ll ans = 0;
+    for (int i = 0; i < (1 << t); i++)
+    {
+        ll tmp = 1, mu = 1;
+        for (int j = 0; j < t; j++)
+            if (i >> j & 1) tmp *= d[j];
+        if (__builtin_parity(i)) mu *= -1;
+        ans = (ans + mu * Pow(2, n / tmp - 1) + mod) % mod;
+    }
+    W(ans);
 }

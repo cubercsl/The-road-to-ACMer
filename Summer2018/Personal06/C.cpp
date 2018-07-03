@@ -134,63 +134,62 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
+VI dx = {-1, 0, 1, 0}, dy = {0, -1, 0, 1};
 
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
+    int n, m, d;
+    R(n, m, d);
+    vector<string> s(n);
+    R(s);
+    vector<VI> vis(n, VI(m, -1));
+    queue<PII> q;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            if (s[i][j] == 'M') q.push({i, j}), vis[i][j] = 0;
+    while (!q.empty())
     {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
+        PII tmp = q.front();
+        q.pop();
+        int &x = tmp.X, &y = tmp.Y;
+        if (vis[x][y] == d) continue;
+        for (int i = 0; i < 4; i++)
         {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
+            int tx = x + dx[i], ty = y + dy[i];
+            if (tx < 0 || ty < 0 || tx >= n || ty >= m || ~vis[tx][ty]) continue;
+            vis[tx][ty] = vis[x][y] + 1;
+            q.push({tx, ty});
         }
-        cout << ans << endl;
     }
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            if (s[i][j] == 'S')
+            {
+                q.push({i, j});
+                if (~vis[i][j])
+                {
+                    W(-1);
+                    return;
+                }
+                vis[i][j] = 0;
+            }
+    while (!q.empty())
+    {
+        PII tmp = q.front();
+        q.pop();
+        int &x = tmp.X, &y = tmp.Y;
+        if (s[x][y] == 'F')
+        {
+            W(vis[x][y]);
+            return;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            int tx = x + dx[i], ty = y + dy[i];
+            if (tx < 0 || ty < 0 || tx >= n || ty >= m || ~vis[tx][ty]) continue;
+            vis[tx][ty] = vis[x][y] + 1;
+            q.push({tx, ty});
+        }
+    }
+    W(-1);
 }

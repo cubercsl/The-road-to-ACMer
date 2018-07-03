@@ -134,63 +134,48 @@ int main()
 
 /****************************************************************************************************/
 
-typedef unsigned long long ull;
-const int N = 1 << 18;
-struct Hash
-{
-    static ull p[N];
-    const static ull SEED = 1e9 + 7;   
-    static void init()
-    {
-        p[0] = 1;
-        for (int i = 1; i < N; i++) p[i] = p[i - 1] * SEED;
-    }
-    vector<ull> h;
-    Hash() {}
-    Hash(const string& s)
-    {
-        int n = s.length();
-        h.resize(n + 1);
-        for (int i = 1; i <= n; i++) h[i] = h[i - 1] * SEED + s[i - 1];
-    }
-    ull get(int l, int r) { return h[r] - h[l] * p[r - l]; }
-    ull substr(int l, int m) { return get(l, l + m); }
-};
-
-ull Hash::p[N];
-
 void go()
 {
-    int m, l;
-    Hash::init();
-    while (cin >> m >> l)
-    {
-        string s;
-        cin >> s;
-        int n = s.length();
-        Hash h(s);
-        unordered_map<ull, int> M;
-        int ans = 0;
-        for (int i = 0; i < l && i + m * l <= n; i++)
+    string s;
+    int q;
+    R(s, q);
+    int n = s.length();
+    vector<VI> G(26);
+    for (int i = 0; i < n; i++) G[s[i] - 'a'].push_back(i + 1);
+
+    stack<int> ss;
+
+    auto push = [&](const char& c) {
+        int t = ss.top();
+        if (!~t)
         {
-            M.clear();
-            for (int j = 0; j < m; j++)
-            {
-                ull tmp = h.substr(i + j * l, l);
-                debug(s.substr(i + j * l, l));
-                M[tmp]++;
-            }
-            if (M.size() == m) ans++;
-            for (int j = 0; i + j + (m + 1) * l <= n; j += l)
-            {
-                ull tmp = h.substr(i + j, l);
-                M[tmp]--;
-                if (M[tmp] == 0) M.erase(tmp);
-                tmp = h.substr(i + j + m * l, l);
-                M[tmp]++;
-                if (M.size() == m) ans++;
-            }
+            ss.push(-1);
+            return 0;
         }
-        cout << ans << endl;
+        int u = c - 'a';
+        auto pos = upper_bound(G[u].begin(), G[u].end(), t);
+        if (pos == G[u].end())
+            ss.push(-1);
+        else
+            ss.push(*pos);
+        return ~ss.top();
+    };
+    auto pop = [&]() {
+        ss.pop();
+        return ~ss.top();
+    };
+    ss.push(0);
+    while (q--)
+    {
+        static string op;
+        cin >> op;
+        if (op == "push")
+        {
+            static char c;
+            cin >> c;
+            push(c) ? W("YES") : W("NO");
+        }
+        else
+            pop() ? W("YES") : W("NO");
     }
 }
