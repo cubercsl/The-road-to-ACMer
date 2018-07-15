@@ -155,8 +155,8 @@ bool dfs(int u, int d)
     for (auto& e : G[u])
     {
         int &v = e.first, &w = e.second;
-        if (vis[v] && ((d + w + col[v]) & 1)) return false;
-        if (!vis[v] && !dfs(v, (w + d) & 1)) return false;
+        if (vis[v] && (d ^ w ^ col[v])) return false;
+        if (!vis[v] && !dfs(v, w ^ d)) return false;
     }
     return true;
 }

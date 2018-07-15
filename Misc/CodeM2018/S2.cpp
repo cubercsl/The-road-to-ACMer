@@ -138,17 +138,15 @@ vector<PII> q;
 
 bool ok(int x, int n)
 {
-    vector<VI> G(n + 1);
-    VI deg(n + 1);
+    vector<VI> G(n);
+    VI deg(n);
     for (int i = 0; i < x; i++)
     {
-        int u = (q[i].X - (i != 0) + n) % n + 1;
-        int v = (q[i].Y - (i != 0) + n) % n + 1;
-        G[u].push_back(v);
-        ++deg[v];
+        G[q[i].first].push_back(q[i].second);
+        ++deg[q[i].second];
     }
     queue<int> q;
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; i < n; i++)
         if (!deg[i]) q.push(i);
     int tot = 0;
     while (!q.empty())
@@ -165,9 +163,14 @@ bool ok(int x, int n)
 void go()
 {
     int n, m;
-    R(n, m);
+    cin >> n >> m;
     q.resize(m);
-    for (auto& t : q) R(t.X, t.Y);
+    for (int i = 0; i < m; i++)
+    {
+        cin >> q[i].first >> q[i].second;
+        q[i].first = (q[i].first - (i != 0) + n - 1) % n;
+        q[i].second = (q[i].second - (i != 0) + n - 1) % n;
+    }
     int l = 1, r = m, ans;
     while (l <= r)
     {
