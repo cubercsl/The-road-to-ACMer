@@ -134,62 +134,28 @@ int main()
 
 /****************************************************************************************************/
 
-vector<PII> good;
-vector<vector<PII> > G;
-VI col, vis, fa;
-const int mod = 119 << 23 | 1;
-
-int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
-bool unite(int x, int y)
-{
-    x = find(x), y = find(y);
-    if (x == y) return false;
-    fa[x] = y;
-    return true;
-}
-
-bool dfs(int u, int d)
-{
-    vis[u] = 1;
-    col[u] = d;
-    for (auto& e : G[u])
-    {
-        int &v = e.first, &w = e.second;
-        if (vis[v] && (d ^ w ^ col[v])) return false;
-        if (!vis[v] && !dfs(v, w ^ d)) return false;
-    }
-    return true;
-}
-
 void go()
 {
     int n, m;
     R(n, m);
-    G.resize(n + 1);
-    fa.resize(n + 1);
-    iota(fa.begin(), fa.end(), 0);
-    while (m--)
+    queue<int> a, b;
+    for (int i = 0, x; i < n; i++)
     {
-        static int u, v, w;
-        R(u, v, w);
-        if (~w)
-            G[u].emplace_back(v, w), G[v].emplace_back(u, w), unite(u, v);
-        else
-            good.emplace_back(u, v);
+        R(x);
+        a.push(x);
     }
-    vis.resize(n + 1);
-    col.resize(n + 1);
-    for (int i = 1; i <= n; i++)
+    for (int i = 0, x; i < m; i++)
     {
-        if (!vis[i] && !dfs(i, 0))
-        {
-            cout << 0 << endl;
-            return;
-        }
+        R(x);
+        b.push(x);
     }
-    ll ans = 1;
-    for (auto& e : good)
-        if (unite(e.first, e.second))
-            (ans <<= 1) %= mod;
-    cout << ans << endl;
+    int ans = 0;
+    while (!a.empty() && !b.empty())
+    {
+        int x = a.front(), y = b.front();
+        debug(x, y);
+        if (y >= x) ans++, a.pop(), b.pop();
+        else a.pop();
+    }
+    W(ans);
 }

@@ -134,62 +134,26 @@ int main()
 
 /****************************************************************************************************/
 
-vector<PII> good;
-vector<vector<PII> > G;
-VI col, vis, fa;
-const int mod = 119 << 23 | 1;
-
-int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
-bool unite(int x, int y)
-{
-    x = find(x), y = find(y);
-    if (x == y) return false;
-    fa[x] = y;
-    return true;
-}
-
-bool dfs(int u, int d)
-{
-    vis[u] = 1;
-    col[u] = d;
-    for (auto& e : G[u])
-    {
-        int &v = e.first, &w = e.second;
-        if (vis[v] && (d ^ w ^ col[v])) return false;
-        if (!vis[v] && !dfs(v, w ^ d)) return false;
-    }
-    return true;
-}
-
 void go()
 {
-    int n, m;
-    R(n, m);
-    G.resize(n + 1);
-    fa.resize(n + 1);
-    iota(fa.begin(), fa.end(), 0);
-    while (m--)
+    string s;
+    cin >> s;
+    int n = s.length();
+    int ans = 0, now = 0, p = -1;
+    VI sum(n + 1);
+    sum[0] = (s[0] - '0') % 3;
+    for (int i = 0; i < n; i++)
     {
-        static int u, v, w;
-        R(u, v, w);
-        if (~w)
-            G[u].emplace_back(v, w), G[v].emplace_back(u, w), unite(u, v);
+        int tmp = s[i] - '0';
+        if (tmp % 3 == 0 || (now + tmp) % 3 == 0)
+            ans++, now = 0, p = i;
         else
-            good.emplace_back(u, v);
-    }
-    vis.resize(n + 1);
-    col.resize(n + 1);
-    for (int i = 1; i <= n; i++)
-    {
-        if (!vis[i] && !dfs(i, 0))
         {
-            cout << 0 << endl;
-            return;
+            now = tmp + now;
+            sum[i] = now;
+            for (int j = p + 1; j < i; j++)
+                if ((sum[i] - sum[j]) % 3 == 0) ans++, now = 0, p = i;
         }
     }
-    ll ans = 1;
-    for (auto& e : good)
-        if (unite(e.first, e.second))
-            (ans <<= 1) %= mod;
-    cout << ans << endl;
+    W(ans);
 }

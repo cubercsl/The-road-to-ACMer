@@ -134,62 +134,30 @@ int main()
 
 /****************************************************************************************************/
 
-vector<PII> good;
-vector<vector<PII> > G;
-VI col, vis, fa;
-const int mod = 119 << 23 | 1;
-
-int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
-bool unite(int x, int y)
-{
-    x = find(x), y = find(y);
-    if (x == y) return false;
-    fa[x] = y;
-    return true;
-}
-
-bool dfs(int u, int d)
-{
-    vis[u] = 1;
-    col[u] = d;
-    for (auto& e : G[u])
-    {
-        int &v = e.first, &w = e.second;
-        if (vis[v] && (d ^ w ^ col[v])) return false;
-        if (!vis[v] && !dfs(v, w ^ d)) return false;
-    }
-    return true;
-}
+const int N = 1 << 17;
+ll d[N];
 
 void go()
 {
-    int n, m;
-    R(n, m);
-    G.resize(n + 1);
-    fa.resize(n + 1);
-    iota(fa.begin(), fa.end(), 0);
-    while (m--)
+    for (int i = 1; i < N; i++)
+        for (int j = i; j < N; j += i) d[j]++;
+    int T;
+    cin >> T;
+    int a, b, c;
+    while (T--)
     {
-        static int u, v, w;
-        R(u, v, w);
-        if (~w)
-            G[u].emplace_back(v, w), G[v].emplace_back(u, w), unite(u, v);
-        else
-            good.emplace_back(u, v);
+        R(a, b, c);
+        int ab = __gcd(a, b), ac = __gcd(a, c), bc = __gcd(b, c);
+        int abc = __gcd(ab, c);
+        VL t;
+        t.push_back(d[abc]);
+        t.push_back(d[ab] - d[abc]);
+        t.push_back(d[ac] - d[abc]);
+        t.push_back(d[bc] - d[abc]);
+        t.push_back(d[a] - d[ab] - d[ac] + d[abc]);
+        t.push_back(d[b] - d[ab] - d[bc] + d[abc]);
+        t.push_back(d[c] - d[ac] - d[bc] + d[abc]);
+        ll ans = t[0] + (t[0] - 1) * t[0] + t[4] * t[5] * t[6] + t[4] * t[5] * t[2] + t[4] * t[5] * t[3] + t[4] * t[5] * t[0] + t[4] * t[1] * t[6] + t[4] * t[1] * t[2] + t[4] * t[1] * t[3] + t[4] * t[1] * t[0] + t[4] * t[3] * t[6] + t[4] * t[3] * t[2] + t[4] * t[3] * t[0] + t[4] * t[0] * t[6] + t[4] * t[0] * t[2] + t[1] * t[5] * t[6] + t[1] * t[5] * t[2] + t[1] * t[5] * t[3] + t[1] * t[5] * t[0] + t[1] * t[3] * t[6] + t[1] * t[3] * t[2] + t[1] * t[3] * t[0] + t[1] * t[0] * t[6] + t[1] * t[0] * t[2] + t[2] * t[5] * t[6] + t[2] * t[5] * t[3] + t[2] * t[5] * t[0] + t[2] * t[1] * t[6] + t[2] * t[3] * t[6] + t[2] * t[3] * t[0] + t[2] * t[0] * t[6] + t[0] * t[5] * t[6] + t[0] * t[5] * t[3] + t[0] * t[3] * t[6] + t[0] * (t[0] - 1) * (t[0] - 2) / 6 + (t[0] + t[0] * (t[0] - 1) / 2) * t[4] + (t[3] + t[3] * (t[3] - 1) / 2) * t[4] + (t[1] + t[1] * (t[1] - 1) / 2) * t[6] + (t[1] + t[1] * (t[1] - 1) / 2) * t[2] + (t[1] + t[1] * (t[1] - 1) / 2) * t[3] + (t[1] + t[1] * (t[1] - 1) / 2) * t[0] + (t[3] + t[3] * (t[3] - 1) / 2) * t[1] + (t[0] + t[0] * (t[0] - 1) / 2) * t[1] + (t[2] + t[2] * (t[2] - 1) / 2) * t[5] + (t[2] + t[2] * (t[2] - 1) / 2) * t[1] + (t[2] + t[2] * (t[2] - 1) / 2) * t[3] + (t[3] + t[3] * (t[3] - 1) / 2) * t[2] + (t[2] + t[2] * (t[2] - 1) / 2) * t[0] + (t[0] + t[0] * (t[0] - 1) / 2) * t[2] + (t[0] + t[0] * (t[0] - 1) / 2) * t[5] + (t[3] + t[3] * (t[3] - 1) / 2) * t[0] + (t[0] + t[0] * (t[0] - 1) / 2) * t[3] + (t[0] + t[0] * (t[0] - 1) / 2) * t[6];
+        W(ans);
     }
-    vis.resize(n + 1);
-    col.resize(n + 1);
-    for (int i = 1; i <= n; i++)
-    {
-        if (!vis[i] && !dfs(i, 0))
-        {
-            cout << 0 << endl;
-            return;
-        }
-    }
-    ll ans = 1;
-    for (auto& e : good)
-        if (unite(e.first, e.second))
-            (ans <<= 1) %= mod;
-    cout << ans << endl;
 }
