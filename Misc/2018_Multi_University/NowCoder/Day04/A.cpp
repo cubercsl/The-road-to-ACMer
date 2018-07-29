@@ -9,6 +9,7 @@ const int mod = 1e9 + 7;
 inline ll Phi(ll n)
 {
     if (phi[n]) return phi[n];
+    ll num = n;
     int ans = n;
     for (int i = 2; i * i <= n; i++)
     {
@@ -19,7 +20,7 @@ inline ll Phi(ll n)
         }
     }
     if (n > 1) ans -= ans / n;
-    return phi[n] = ans;
+    return phi[num] = ans;
 }
 
 ll Pow(ll a, ll n, ll p)
@@ -38,6 +39,7 @@ int a[N], c[N];
 int main()
 {
     for (int p = mod; p != 1; p = phi[p]) phi[p] = Phi(p);
+    phi[1] = 1;
     int T;
     scanf("%d", &T);
     while (T--)
@@ -46,7 +48,7 @@ int main()
         int n = strlen(s);
         for (int i = 0; i < n; i++) a[i] = s[i] - '0';
         c[n - 1] = mod;
-        for (int i = n - 1; ~i; i--)
+        for (int i = n - 1; i; i--)
         {
             if (a[i] == 2)
                 c[i - 1] = phi[c[i]];
