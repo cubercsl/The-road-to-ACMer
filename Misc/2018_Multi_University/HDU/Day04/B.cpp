@@ -49,30 +49,10 @@ int main()
     long long tmp = 1;
     for (auto& t : v)
     {
-        while (t.l < L)
-        {
-            --L;
-            tmp = ((tmp + C(L, R)) * inv2) % p;
-        }
-        //  add(a[--L]);
-        while (t.l > L)
-        {
-            tmp = (tmp * 2 % p - C(L, R) + p) % p;
-            L++;
-        }
-        //  del(a[L++]);
-        while (t.r < R)
-        {
-            tmp = (tmp - C(L, R) + p) % p;
-            R--;
-        }
-        // del(a[R--]);
-        while (t.r > R)
-        {
-            ++R;
-            tmp = (tmp + C(L, R)) % p;
-        }
-        // add(a[++R]);
+        while (t.l < L) tmp = ((tmp + C(--L, R)) * inv2) % p;
+        while (t.l > L) tmp = (tmp * 2 % p - C(L++, R) + p) % p;
+        while (t.r < R) tmp = (tmp - C(L, R--) + p) % p;
+        while (t.r > R) tmp = (tmp + C(L, ++R)) % p;
         ans[t.id] = tmp;
     }
     for (auto& t : ans) printf("%d\n", t);
