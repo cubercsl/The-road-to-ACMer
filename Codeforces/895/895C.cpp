@@ -1,101 +1,190 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define clr(a, x) memset(a, x, sizeof(a))
-#define mp(x, y) make_pair(x, y)
-#define pb(x) push_back(x)
-#define X first
-#define Y second
-#define fastin                    \
-    ios_base::sync_with_stdio(0); \
-    cin.tie(0);
+
+#pragma optimize("-O3")
+
 typedef long long ll;
 typedef long double ld;
-typedef pair<int, int> PII;
 typedef vector<int> VI;
-const int INF = 0x3f3f3f3f;
-const int mod = 1e9 + 7;
-const double eps = 1e-6;
+typedef vector<ll> VL;
+typedef pair<int, int> PII;
+typedef pair<ll, ll> PLL;
 
-const int maxn = 510;
-const int maxp = 2010;
-const int N = 1e5 + 7;
-int prime[maxp], vis[N];
-void seive(int n)
-{
-    int m = (int)sqrt(n + 0.5);
-    memset(vis, 0, sizeof(vis));
-    for (int i = 2; i <= m; i++)
-        if (!vis[i])
-            for (int j = i * i; j <= n; j += i) vis[j] = 1;
-}
+string to_string(string s) { return '"' + s + '"'; }
 
-int getprime(int n)
+string to_string(const char* s) { return to_string((string)s); }
+
+string to_string(const bool& b) { return (b ? "true" : "false"); }
+
+template <typename A, typename B>
+string to_string(pair<A, B> p) { return "(" + to_string(p.first) + ", " + to_string(p.second) + ")"; }
+
+template <typename A>
+string to_string(const A& v)
 {
-    seive(n);
-    int c = 0;
-    for (int i = 2; i <= n; i++)
+    bool first = true;
+    string res = "{";
+    for (const auto& x : v)
     {
-        if (!vis[i]) prime[c++] = i;
+        if (!first)
+            res += ", ";
+        first = false;
+        res += to_string(x);
     }
-    return c;
+    res += "}";
+    return res;
 }
 
-ll Pow(ll a, ll n)
+void debug_out() { cerr << endl; }
+
+template <typename Head, typename... Tail>
+void debug_out(Head H, Tail... T)
 {
-    ll t = 1;
-    for (; n; n >>= 1, (a *= a) %= mod)
-        if (n & 1) (t *= a) %= mod;
-    return t;
+    cerr << " " << to_string(H);
+    debug_out(T...);
 }
 
-int A[maxn][maxn]; //系数矩阵
-int solve(int m, int n)
+#ifndef ONLINE_JUDGE
+#define debug(...) cerr << "[" << #__VA_ARGS__ << "]:", debug_out(__VA_ARGS__);
+#else
+#define debug(...) 42;
+#define cerr \
+    if (false) cout
+#endif
+
+template <typename T>
+inline void _read(T& x)
 {
-    int i = 0, j = 0, k, r, u;
-    while (i < m && j < n)
-    {
-        r = i;
-        for (k = i; k < m; k++)
-            if (A[k][j]) {
-                r = k;
-                break;
-            }
-        if (A[r][j])
-        {
-            if (r != i)
-                for (k = 0; k <= n; k++) swap(A[r][k], A[i][k]);
-            for (u = i + 1; u < m; u++)
-                if (A[u][j])
-                    for (k = i; k <= n; k++) A[u][k] ^= A[i][k];
-            i++;
-        }
-        j++;
-    }
-    return i;
+    cin >> x;
 }
+
+template <typename A, typename B>
+inline void _read(pair<A, B>& x)
+{
+    _read(x.first);
+    _read(x.second);
+}
+
+template <typename T>
+inline void _read(vector<T>& x)
+{
+    for (auto& v : x)
+        _read(v);
+}
+
+void R() {}
+
+template <typename T, typename... U>
+void R(T& head, U&... tail)
+{
+    _read(head);
+    R(tail...);
+}
+
+#define endl '\n'
+
+template <typename T>
+inline void _write(const T& x)
+{
+    cout << x << ' ';
+}
+
+template <typename A, typename B>
+inline void _write(const pair<A, B>& x)
+{
+    _write(x.first);
+    _write(x.second);
+}
+
+template <typename T>
+inline void _write(const vector<T>& in)
+{
+    for (const auto& x : in)
+        _write(x);
+}
+
+void W() { cout << endl; }
+
+template <typename T, typename... U>
+void W(const T& head, const U&... tail)
+{
+    _write(head);
+    W(tail...);
+}
+
+#define my_sort_unique(c) (sort(c.begin(), c.end()), c.resize(distance(c.begin(), unique(c.begin(), c.end()))))
+#define my_unique(a) a.resize(distance(a.begin(), unique(a.begin(), a.end())))
+#define X first
+#define Y second
+
+void go();
+
 int main()
 {
-    int m = getprime(2010);
+#ifndef ONLINE_JUDGE
+    freopen("1.in", "r", stdin);
+    freopen("1.out", "w", stdout);
+#endif
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    go();
+    return 0;
+}
 
-    int n, maxp = 0;
-    ll x;
-    scanf("%d", &n);
-    memset(A, 0, sizeof(A));
-    for (int i = 0; i < n; i++)
+/****************************************************************************************************/
+
+const int mod = 1e9 + 7;
+void go()
+{
+    VI primes = {2,
+                 3,
+                 5,
+                 7,
+                 11,
+                 13,
+                 17,
+                 19,
+                 23,
+                 29,
+                 31,
+                 37,
+                 41,
+                 43,
+                 47,
+                 53,
+                 59,
+                 61,
+                 67};
+    int n;
+    R(n);
+    VI a(20);
+    for (int i = 0, x; i < n; i++)
     {
-        scanf("%lld", &x);
-        for (int j = 0; j < m; j++)
+        int mask = 0;
+        R(x);
+        for (int j = 0; j < primes.size(); j++)
         {
-            while (x % prime[j] == 0) {
-                maxp = max(maxp, j);
-                x /= prime[j];
-                A[j][i] ^= 1;
+            if (x % primes[j] == 0)
+                while (x % primes[j] == 0) mask ^= (1 << j), x /= primes[j];
+        }
+        for (int j = 19; ~j; j--)
+        {
+            if (mask >> j & 1)
+            {
+                if (!a[j])
+                {
+                    a[j] = mask;
+                    break;
+                }
+                mask ^= a[j];
             }
         }
     }
-    ll r = solve(maxp + 1, n);
-    ll tmp = n - r;
-    ll ans = Pow(2, tmp) - 1;
-    printf("%lld\n", ans);
-    return 0;
+    int r = 0;
+    for (int i = 0; i < 20; i++)
+        if (a[i]) r++;
+    ll ans = 1;
+    for (int i = 0; i < n - r; i++) (ans <<= 1) %= mod;
+    W(ans - 1);
 }
