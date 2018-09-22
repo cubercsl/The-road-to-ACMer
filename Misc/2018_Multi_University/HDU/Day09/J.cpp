@@ -1,39 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-const int p = 119 << 23 | 1;
-const int maxn = 1e7 + 5;
-ll Pow(ll a, ll n, ll p)
-{
-    ll t = 1;
-    for (; n; n >>= 1, (a *= a) %= p)
-        if (n & 1) (t *= a) %= p;
-    return t;
-}
-
-ll f[maxn];
+const int INF = 0x3f3f3f3f;
+typedef pair<int, int> PII;
 
 int main()
 {
-    f[0] = 1;
-    for (int i = 1; i < maxn; i++) f[i] = (f[i - 1] * 2) % p;
     int T;
     scanf("%d", &T);
     while (T--)
     {
-        ll a, b, c, d;
-        ll ans = 0;
-        scanf("%lld%lld%lld%lld", &a, &b, &c, &d);
-        if (d > 1) ans += (((((f[d] - d - 1) % p) * f[a] % p) * f[b] % p) * f[c] % p);
-        ans %= p;
-        if (d > 0 && b > 0) ans += ((d * (f[b] - 1) % p) * f[a] % p * f[c]) % p;
-        ans %= p;
-        if (b > 1 && c > 0) ans += ((f[b] - 1 - b) * (f[c] - 1) % p * f[a]) % p;
-        ans %= p;
-        ans = (Pow(2, a + b + c + d, p) - ans) % p;
-        ans = (ans + p) % p;
-        printf("%lld\n", ans);
+        int n, m;
+        scanf("%d%d", &n, &m);
+        vector<int> a(4, INF), b(4, INF);
+        for (int i = 1; i <= n; i++) scanf("%d", &a[i]), a[i] += 3 - i;
+        for (int i = 1; i <= m; i++) scanf("%d", &b[i]), b[i] += 3 - i;
+        if (a[2] < a[3]) swap(a[2], a[3]);
+        if (b[2] < b[3]) swap(b[2], b[3]);
+        printf("%d\n", [](PII a1, PII a2, PII b1, PII b2) {
+            if (a1 > a2) swap(a1, a2);
+            if (b1 > b2) swap(b1, b2);
+            if (a1 != b1) return (a1 < b1) * 2 - 1;
+            if (a2 != b2) return (a2 < b2) * 2 - 1;
+            return 0;
+        }({a[3], a[2]}, {a[1], a[0]}, {b[3], b[2]}, {b[1], b[0]}));
     }
-    return 0;
 }
