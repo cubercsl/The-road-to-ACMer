@@ -30,46 +30,10 @@ void err(T a, Args... args)
 /****************************************************************************************************/
 
 const int N = 1 << 18;
-int fa[N];
-pair<int, int> lazy[N], cnt[N];
-vector<pair<int, int>*> p[N];
 
-int find(int x) { return fa[x] == x ? x : fa[x] = find(fa[x]); }
+pair<int, pair<int, int>> Node;
 
-void unite(int x, int y)
-{
-    x = find(x), y = find(y);
-    // y->x
-    if (p[y].size() <= p[x].size())
-    {
-        for (auto& t : p[y])
-        {
-            t->first += lazy[y].first;
-            t->second += lazy[y].second;
-            t->second--;
-            p[x].push_back(t);
-        }
-        p[y].clear();
-        lazy[y] = {0, 0};
-        lazy[x].first++;
-        lazy[x].second++;
-        fa[y] = x;
-    }
-    else
-    {
-        for (auto& t : p[x])
-        {
-            t->first += lazy[x].first;
-            t->second += lazy[x].second;
-            t->second++;
-            p[y].push_back(t);
-        }
-        p[x].clear();
-        lazy[x] = {0, 0};
-        lazy[y].first++;
-        fa[x] = y;
-    }
-}
+
 const int mod = 119 << 23 | 1;
 typedef long long ll;
 ll Pow(ll a, ll n)
@@ -107,8 +71,9 @@ int main()
         else
         {
             scanf("%d", &x);
-            int home = cnt[x].second + lazy[find(x)].second;
-            int away = cnt[x].first + lazy[find(x)].first - home;
+            x = find(x);
+            int home = cnt[x].second + lazy[x].second;
+            int away = cnt[x].first + lazy[x].first - home;
             dbg(home, away);
             ll ans = p2_3[home] * p1_3[away] % mod * pow3 % mod;
             printf("%lld\n", ans);
