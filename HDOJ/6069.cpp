@@ -81,8 +81,8 @@ ll solve(ll l, ll r)
 int main()
 {
 #ifndef ONLINE_JUDGE
-    freopen("1.in", "r", stdin);
-    freopen("1.out", "w", stdout);
+    // freopen("1.in", "r", stdin);
+    // freopen("1.out", "w", stdout);
 #endif
     init(1000005);
     int T;

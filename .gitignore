@@ -114,3 +114,10 @@ $RECYCLE.BIN/
 # VSCode Setting Files
 # =========================
 .vscode/*
+
+# =========================
+# Sample Inout/Output
+# =========================
+*.in
+*.out
+*.txt
